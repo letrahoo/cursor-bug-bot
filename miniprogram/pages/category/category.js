@@ -9,13 +9,13 @@ Page({
     products: [],
     loading: true,
     sortOptions: [
-      { label: 'Default', value: 'default' },
-      { label: 'Price Asc', value: 'priceAsc' },
-      { label: 'Price Desc', value: 'priceDesc' },
-      { label: 'Sales', value: 'sales' }
+      { label: '默认排序', value: 'default' },
+      { label: '价格从低到高', value: 'priceAsc' },
+      { label: '价格从高到低', value: 'priceDesc' },
+      { label: '销量优先', value: 'sales' }
     ],
     currentSort: 'default',
-    sortLabel: 'Default',
+    sortLabel: '默认排序',
     showSortPopup: false,
     page: 1,
     hasMore: true,
@@ -34,7 +34,8 @@ Page({
     this.setData({ 
       loading: true,
       page: 1,
-      hasMore: true
+      hasMore: true,
+      products: []
     })
     this.loadProducts().then(() => {
       wx.stopPullDownRefresh()
@@ -52,9 +53,9 @@ Page({
     const categories = app.globalData.categories.map(category => ({
       ...category,
       subCategories: [
-        { id: `${category.id}_1`, name: `${category.name} - New Arrivals` },
-        { id: `${category.id}_2`, name: `${category.name} - Best Sellers` },
-        { id: `${category.id}_3`, name: `${category.name} - On Sale` }
+        { id: `${category.id}_1`, name: `${category.name} - 新品` },
+        { id: `${category.id}_2`, name: `${category.name} - 热销` },
+        { id: `${category.id}_3`, name: `${category.name} - 促销` }
       ]
     }))
 
@@ -82,21 +83,23 @@ Page({
   loadProducts() {
     if (this.data.loading) return;
     this.setData({ loading: true });
-    // Mock data - in a real app, this would be an API call
+    
+    // 模拟数据加载
     setTimeout(() => {
       const { page, pageSize, products, currentCategory, currentSubCategory, currentSort } = this.data;
       const newProducts = Array.from({ length: pageSize }, (_, i) => {
         const productIndex = (page - 1) * pageSize + i;
         return {
           id: `${currentCategory.id}_${productIndex + 1}`,
-          name: `${currentCategory.name} Product ${productIndex + 1}`,
+          name: `${currentCategory.name} 商品 ${productIndex + 1}`,
           price: Math.floor(Math.random() * 5000) + 1000,
           originalPrice: Math.floor(Math.random() * 1000) + 6000,
           image: `/images/products/products-${(productIndex % 5) + 1}.png`,
           sales: Math.floor(Math.random() * 1000),
-          tags: ['New', 'Hot'].filter(() => Math.random() > 0.5)
+          tags: ['新品', '热销'].filter(() => Math.random() > 0.5)
         };
       });
+
       let merged = [...products, ...newProducts];
       if (currentSort === 'priceAsc') {
         merged.sort((a, b) => a.price - b.price);
@@ -105,11 +108,11 @@ Page({
       } else if (currentSort === 'sales') {
         merged.sort((a, b) => b.sales - a.sales);
       }
+
       this.setData({
         products: merged,
         loading: false,
-        page: page + 1,
-        hasMore: page < 3 // Mock pagination
+        hasMore: page < 3 // 模拟分页
       });
     }, 500);
   },
@@ -154,24 +157,54 @@ Page({
     }
   },
 
-  onProductTap(e) {
-    const { id } = e.currentTarget.dataset
-    wx.navigateTo({
-      url: `/pages/product/detail?id=${id}`
-    })
-  },
-
   sortProducts(products) {
     const { currentSort } = this.data
     switch (currentSort) {
-      case 'price_asc':
+      case 'priceAsc':
         return [...products].sort((a, b) => a.price - b.price)
-      case 'price_desc':
+      case 'priceDesc':
         return [...products].sort((a, b) => b.price - a.price)
       case 'sales':
         return [...products].sort((a, b) => b.sales - a.sales)
       default:
         return products
+    }
+  },
+
+  onProductTap(e) {
+    const { product } = e.currentTarget.dataset
+    wx.navigateTo({
+      url: `/pages/product/detail?id=${product.id}`
+    })
+  },
+  startRecLoop() {
+    // 第一次需要手动切换下第二条
+    this.timeoutId1 = setTimeout(() => {
+        this.setData({
+            showFirstRec: !this.data.showFirstRec
+        });
+    }, 6600);
+
+    // 注册定时切换
+    this.intervalId = setInterval(() => {
+        this.timeoutId2 = setTimeout(() => {
+            this.setData({
+                showFirstRec: !this.data.showFirstRec
+            });
+        }, 6600);
+    }, 13200);
+  },
+
+  onUnload() {
+    // 清理所有定时器
+    if (this.timeoutId1) {
+      clearTimeout(this.timeoutId1);
+    }
+    if (this.timeoutId2) {
+      clearTimeout(this.timeoutId2);
+    }
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
     }
   }
 }) 

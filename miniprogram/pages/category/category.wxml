@@ -41,47 +41,30 @@
                   bindscrolltolower="onReachBottom"
                   enable-back-to-top>
         <view class="product-grid">
-          <view class="product-card"
-                wx:for="{{products}}"
-                wx:key="id"
-                bindtap="onProductTap"
-                data-id="{{item.id}}">
-            <image src="{{item.image}}" mode="aspectFill" class="product-image"/>
-            <view class="product-info">
-              <view class="product-name">{{item.name}}</view>
-              <view class="product-price-row">
-                <view class="price">{{item.price}}</view>
-                <view class="original-price">¥{{item.originalPrice}}</view>
-              </view>
-              <view class="product-meta">
-                <text class="sales">Sales: {{item.sales}}</text>
-                <view class="product-tags">
-                  <text class="tag tag-primary" 
-                        wx:for="{{item.tags}}" 
-                        wx:for-item="tag" 
-                        wx:for-index="tagIndex" 
-                        wx:key="tagIndex">
-                    {{tag}}
-                  </text>
-                </view>
-              </view>
-            </view>
-          </view>
+          <product-card 
+            wx:for="{{products}}" 
+            wx:key="id"
+            product="{{item}}"
+            bindtap="onProductTap"
+            data-product="{{item}}"
+          />
         </view>
-
-        <!-- Loading States -->
-        <view class="loading-more" wx:if="{{loading && products.length > 0}}">
+        
+        <!-- Loading State -->
+        <view class="loading-state" wx:if="{{loading}}">
           <view class="loading-spinner"></view>
-          <text>Loading...</text>
+          <text>加载中...</text>
         </view>
-
-        <view class="no-more" wx:if="{{!hasMore && products.length > 0}}">
-          <text>No more products</text>
+        
+        <!-- No More Data -->
+        <view class="no-more" wx:if="{{!hasMore && !loading && products.length > 0}}">
+          <text>没有更多了</text>
         </view>
-
+        
+        <!-- Empty State -->
         <view class="empty-state" wx:if="{{!loading && products.length === 0}}">
-          <image src="/images/empty.png" mode="aspectFit" class="empty-image"/>
-          <text>No products found</text>
+          <image src="/images/empty.png" mode="aspectFit"></image>
+          <text>暂无商品</text>
         </view>
       </scroll-view>
     </view>
@@ -92,7 +75,7 @@
     <view class="popup-mask" bindtap="onCloseSortPopup"></view>
     <view class="popup-content">
       <view class="popup-header">
-        <text class="popup-title">Sort By</text>
+        <text class="popup-title">排序方式</text>
         <view class="popup-close" bindtap="onCloseSortPopup">×</view>
       </view>
       <view class="popup-body">
