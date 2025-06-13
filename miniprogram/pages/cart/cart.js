@@ -1,3 +1,5 @@
+const { counts } = require('./utils');
+
 // pages/cart/cart.js
 Page({
 
@@ -12,7 +14,7 @@ Page({
    * Lifecycle function--Called when page load
    */
   onLoad(options) {
-
+    counts([1, 2, 3])
   },
 
   /**
