@@ -45,9 +45,9 @@ Page({
             stock: Math.floor(Math.random() * 100) + 50,
             sales: Math.floor(Math.random() * 1000),
             images: [
-              `/images/products/product-${(productIndex % 5) + 1}.png`,
-              `/images/products/product-${((productIndex + 1) % 5) + 1}.png`,
-              `/images/products/product-${((productIndex + 2) % 5) + 1}.png`
+              `/images/products/products-${(productIndex % 5) + 1}.png`,
+              `/images/products/products-${((productIndex + 1) % 5) + 1}.png`,
+              `/images/products/products-${((productIndex + 2) % 5) + 1}.png`
             ],
             description: 'This is a high-quality product with amazing features. It offers excellent performance and durability. Perfect for everyday use.',
             specifications: [

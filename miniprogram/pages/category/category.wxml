@@ -30,7 +30,7 @@
       <!-- Sort Bar -->
       <view class="sort-bar">
         <view class="sort-option" bindtap="onSortTap">
-          <text>{{sortOptions.find(opt => opt.value === currentSort).label}}</text>
+          <text>{{sortLabel}}</text>
           <text class="sort-arrow">▼</text>
         </view>
       </view>
@@ -58,8 +58,9 @@
                 <view class="product-tags">
                   <text class="tag tag-primary" 
                         wx:for="{{item.tags}}" 
-                        wx:key="*this" 
-                        wx:for-item="tag">
+                        wx:for-item="tag" 
+                        wx:for-index="tagIndex" 
+                        wx:key="tagIndex">
                     {{tag}}
                   </text>
                 </view>
@@ -95,13 +96,13 @@
         <view class="popup-close" bindtap="onCloseSortPopup">×</view>
       </view>
       <view class="popup-body">
-        <view class="sort-option-item {{currentSort === item.value ? 'active' : ''}}"
+        <view class="sort-option-item {{item.value === sortValue ? 'active' : ''}}"
               wx:for="{{sortOptions}}"
               wx:key="value"
               bindtap="onSortSelect"
               data-value="{{item.value}}">
           <text>{{item.label}}</text>
-          <text class="check-icon" wx:if="{{currentSort === item.value}}">✓</text>
+          <text class="check-icon" wx:if="{{item.value === sortValue}}">✓</text>
         </view>
       </view>
     </view>

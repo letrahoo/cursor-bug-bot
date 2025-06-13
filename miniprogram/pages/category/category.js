@@ -9,15 +9,17 @@ Page({
     products: [],
     loading: true,
     sortOptions: [
-      { value: 'default', label: 'Default' },
-      { value: 'price_asc', label: 'Price: Low to High' },
-      { value: 'price_desc', label: 'Price: High to Low' },
-      { value: 'sales', label: 'Best Selling' }
+      { label: 'Default', value: 'default' },
+      { label: 'Price Asc', value: 'priceAsc' },
+      { label: 'Price Desc', value: 'priceDesc' },
+      { label: 'Sales', value: 'sales' }
     ],
     currentSort: 'default',
+    sortLabel: 'Default',
     showSortPopup: false,
     page: 1,
-    hasMore: true
+    hasMore: true,
+    pageSize: 10
   },
 
   onLoad(options) {
@@ -78,47 +80,38 @@ Page({
   },
 
   loadProducts() {
-    this.setData({ loading: true })
+    if (this.data.loading) return;
+    this.setData({ loading: true });
     // Mock data - in a real app, this would be an API call
-    return new Promise(resolve => {
-      setTimeout(() => {
-        const products = Array(10).fill(null).map((_, index) => {
-          const productIndex = (this.data.page - 1) * 10 + index
-          return {
-            id: `${this.data.currentCategory.id}_${productIndex + 1}`,
-            name: `${this.data.currentCategory.name} Product ${productIndex + 1}`,
-            price: Math.floor(Math.random() * 5000) + 1000,
-            originalPrice: Math.floor(Math.random() * 1000) + 6000,
-            image: `/images/products/product-${(productIndex % 5) + 1}.png`,
-            sales: Math.floor(Math.random() * 1000),
-            tags: ['New', 'Hot'].filter(() => Math.random() > 0.5)
-          }
-        })
-
-        const sortedProducts = this.sortProducts(products)
-
-        this.setData({
-          products: this.data.page === 1 ? sortedProducts : [...this.data.products, ...sortedProducts],
-          loading: false,
-          hasMore: this.data.page < 3 // Mock pagination
-        })
-        resolve()
-      }, 500)
-    })
-  },
-
-  sortProducts(products) {
-    const { currentSort } = this.data
-    switch (currentSort) {
-      case 'price_asc':
-        return [...products].sort((a, b) => a.price - b.price)
-      case 'price_desc':
-        return [...products].sort((a, b) => b.price - a.price)
-      case 'sales':
-        return [...products].sort((a, b) => b.sales - a.sales)
-      default:
-        return products
-    }
+    setTimeout(() => {
+      const { page, pageSize, products, currentCategory, currentSubCategory, currentSort } = this.data;
+      const newProducts = Array.from({ length: pageSize }, (_, i) => {
+        const productIndex = (page - 1) * pageSize + i;
+        return {
+          id: `${currentCategory.id}_${productIndex + 1}`,
+          name: `${currentCategory.name} Product ${productIndex + 1}`,
+          price: Math.floor(Math.random() * 5000) + 1000,
+          originalPrice: Math.floor(Math.random() * 1000) + 6000,
+          image: `/images/products/products-${(productIndex % 5) + 1}.png`,
+          sales: Math.floor(Math.random() * 1000),
+          tags: ['New', 'Hot'].filter(() => Math.random() > 0.5)
+        };
+      });
+      let merged = [...products, ...newProducts];
+      if (currentSort === 'priceAsc') {
+        merged.sort((a, b) => a.price - b.price);
+      } else if (currentSort === 'priceDesc') {
+        merged.sort((a, b) => b.price - a.price);
+      } else if (currentSort === 'sales') {
+        merged.sort((a, b) => b.sales - a.sales);
+      }
+      this.setData({
+        products: merged,
+        loading: false,
+        page: page + 1,
+        hasMore: page < 3 // Mock pagination
+      });
+    }, 500);
   },
 
   onCategoryTap(e) {
@@ -147,11 +140,18 @@ Page({
 
   onSortSelect(e) {
     const { value } = e.currentTarget.dataset
-    this.setData({
-      currentSort: value,
-      showSortPopup: false,
-      products: this.sortProducts(this.data.products)
-    })
+    const opt = this.data.sortOptions.find(o => o.value === value)
+    if (opt) {
+      this.setData({
+        currentSort: value,
+        sortLabel: opt.label,
+        showSortPopup: false,
+        products: this.sortProducts(this.data.products),
+        page: 1,
+        hasMore: true
+      })
+      this.loadProducts()
+    }
   },
 
   onProductTap(e) {
@@ -159,5 +159,19 @@ Page({
     wx.navigateTo({
       url: `/pages/product/detail?id=${id}`
     })
+  },
+
+  sortProducts(products) {
+    const { currentSort } = this.data
+    switch (currentSort) {
+      case 'price_asc':
+        return [...products].sort((a, b) => a.price - b.price)
+      case 'price_desc':
+        return [...products].sort((a, b) => b.price - a.price)
+      case 'sales':
+        return [...products].sort((a, b) => b.sales - a.sales)
+      default:
+        return products
+    }
   }
 }) 
