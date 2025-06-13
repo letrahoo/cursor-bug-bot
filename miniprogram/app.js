@@ -1,7 +1,10 @@
+import eventBus from './utils/event-bus';
+
 App({
   globalData: {
     userInfo: null,
     cartItems: [],
+    eventBus,
     categories: [
       {
         id: 'phones',
@@ -61,6 +64,40 @@ App({
         this.login()
       }
     })
+
+    // Setup global event handlers
+    const { eventBus } = this.globalData;
+    
+    // Listen for cart updates
+    eventBus.on('cart:update', (cartData) => {
+      // Update global cart items
+      this.globalData.cartItems = cartData.items;
+      
+      // Update cart badge if needed
+      if (cartData.totalItems !== undefined) {
+        wx.setTabBarBadge({
+          index: 2, // Assuming cart tab is at index 2
+          text: cartData.totalItems.toString()
+        }).catch(() => {
+          // If badge setting fails (e.g., no items), remove badge
+          wx.removeTabBarBadge({ index: 2 });
+        });
+      }
+    });
+
+    // Listen for user login/logout
+    eventBus.on('user:login', (userInfo) => {
+      this.globalData.userInfo = userInfo;
+      // Sync cart data after login if needed
+      this.syncCartData();
+    });
+
+    eventBus.on('user:logout', () => {
+      this.globalData.userInfo = null;
+      this.globalData.cartItems = [];
+      // Clear cart badge
+      wx.removeTabBarBadge({ index: 2 });
+    });
   },
   login() {
     wx.login({
@@ -73,5 +110,17 @@ App({
         }
       }
     })
+  },
+  // Add a helper method for cart data sync
+  syncCartData() {
+    // In a real app, this would sync cart data with the server
+    const { eventBus } = this.globalData;
+    // Mock sync - in real app, this would be an API call
+    setTimeout(() => {
+      eventBus.emit('cart:update', {
+        items: this.globalData.cartItems,
+        totalItems: this.globalData.cartItems.length
+      });
+    }, 100);
   }
 }) 
