@@ -19,12 +19,17 @@ Component({
     attached() {
         const app = getApp();
         const { eventBus } = app.globalData;
-        eventBus.on('recommend:update', this.updateRecommendTitle.bind(this));
+        // 保存绑定后的函数引用，以便在 detached 中解绑
+        this.boundUpdateRecommendTitle = this.updateRecommendTitle.bind(this);
+        eventBus.on('recommend:update', this.boundUpdateRecommendTitle);
     },
     detached() {
       const app = getApp();
       const { eventBus } = app.globalData;
-      eventBus.off('recommend:update', this.updateRecommendTitle.bind(this));
+      if (this.boundUpdateRecommendTitle) {
+        eventBus.off('recommend:update', this.boundUpdateRecommendTitle);
+        this.boundUpdateRecommendTitle = null;
+      }
     }
   },
 

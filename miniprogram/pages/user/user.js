@@ -1,3 +1,5 @@
+import Controller from './controller';
+
 // pages/user/user.js
 Page({
 
@@ -12,7 +14,8 @@ Page({
    * Lifecycle function--Called when page load
    */
   onLoad(options) {
-
+    const controller = new Controller(this);
+    this.controller = controller;
   },
 
   /**

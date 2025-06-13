@@ -193,5 +193,18 @@ Page({
             });
         }, 6600);
     }, 13200);
+  },
+
+  onUnload() {
+    // 清理所有定时器
+    if (this.timeoutId1) {
+      clearTimeout(this.timeoutId1);
+    }
+    if (this.timeoutId2) {
+      clearTimeout(this.timeoutId2);
+    }
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
   }
 }) 

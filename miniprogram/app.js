@@ -122,5 +122,14 @@ App({
         totalItems: this.globalData.cartItems.length
       });
     }, 100);
+  },
+  onUnload() {
+    // Clean up event listeners
+    const { eventBus } = this.globalData;
+    if (eventBus) {
+      eventBus.clearEvent('cart:update');
+      eventBus.clearEvent('user:login');
+      eventBus.clearEvent('user:logout');
+    }
   }
 }) 
