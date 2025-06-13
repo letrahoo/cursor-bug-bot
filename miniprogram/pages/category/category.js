@@ -176,5 +176,22 @@ Page({
     wx.navigateTo({
       url: `/pages/product/detail?id=${product.id}`
     })
+  },
+  startRecLoop() {
+    // 第一次需要手动切换下第二条
+    this.timeoutId1 = setTimeout(() => {
+        this.setData({
+            showFirstRec: !this.data.showFirstRec
+        });
+    }, 6600);
+
+    // 注册定时切换
+    this.intervalId = setInterval(() => {
+        this.timeoutId2 = setTimeout(() => {
+            this.setData({
+                showFirstRec: !this.data.showFirstRec
+            });
+        }, 6600);
+    }, 13200);
   }
 }) 
