@@ -1,0 +1,52 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/category/category",
+    "pages/cart/cart",
+    "pages/user/user",
+    "pages/product/detail",
+    "pages/order/list",
+    "pages/order/detail"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "Electronic Store",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#1296db",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "Home",
+        "iconPath": "images/tabbar/tabbar-1.png",
+        "selectedIconPath": "images/tabbar/tabbar-1-active.png"
+      },
+      {
+        "pagePath": "pages/category/category",
+        "text": "Category",
+        "iconPath": "images/tabbar/tabbar-2.png",
+        "selectedIconPath": "images/tabbar/tabbar-2-active.png"
+      },
+      {
+        "pagePath": "pages/cart/cart",
+        "text": "Cart",
+        "iconPath": "images/tabbar/tabbar-3.png",
+        "selectedIconPath": "images/tabbar/tabbar-3-active.png"
+      },
+      {
+        "pagePath": "pages/user/user",
+        "text": "My",
+        "iconPath": "images/tabbar/tabbar-4.png",
+        "selectedIconPath": "images/tabbar/tabbar-4-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "usingComponents": {}
+} 

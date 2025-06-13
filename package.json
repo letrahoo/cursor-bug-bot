@@ -1,0 +1,16 @@
+{
+  "name": "cursor-bug-bot",
+  "version": "1.0.0",
+  "description": "Electronic Products Sales Platform - WeChat Mini Program",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate-images": "node scripts/generate-images.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "canvas": "^2.11.2"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "desc": "Electronic Products Sales Platform sitemap",
+  "rules": [{
+    "action": "allow",
+    "page": "*"
+  }]
+} 

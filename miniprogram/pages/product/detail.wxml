@@ -1,0 +1,170 @@
+<view class="container" wx:if="{{!loading}}">
+  <!-- Product Images Swiper -->
+  <swiper class="product-swiper" indicator-dots autoplay circular>
+    <swiper-item wx:for="{{product.images}}" wx:key="*this" bindtap="onImagePreview" data-current="{{item}}">
+      <image src="{{item}}" mode="aspectFill" class="product-image"/>
+    </swiper-item>
+  </swiper>
+
+  <!-- Product Info -->
+  <view class="product-info card">
+    <view class="product-price-row">
+      <view class="price">{{product.price}}</view>
+      <view class="original-price">¥{{product.originalPrice}}</view>
+    </view>
+    <view class="product-name">{{product.name}}</view>
+    <view class="product-meta">
+      <text class="sales">Sales: {{product.sales}}</text>
+      <text class="stock">Stock: {{product.stock}}</text>
+    </view>
+  </view>
+
+  <!-- Specifications -->
+  <view class="spec-section card" bindtap="onSpecSelect">
+    <view class="section-title">Specifications</view>
+    <view class="spec-content">
+      <view class="spec-item" wx:for="{{product.specifications}}" wx:key="name">
+        <text class="spec-name">{{item.name}}</text>
+        <view class="spec-options">
+          <text class="spec-option {{selectedSpec[item.name] === option ? 'selected' : ''}}"
+                wx:for="{{item.options}}" 
+                wx:key="*this"
+                wx:for-item="option"
+                data-spec="{{item.name}}"
+                data-value="{{option}}">
+            {{option}}
+          </text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- Tabs -->
+  <view class="tabs card">
+    <view class="tab {{currentTab === 'detail' ? 'active' : ''}}" 
+          bindtap="onTabChange" 
+          data-tab="detail">Details</view>
+    <view class="tab {{currentTab === 'specs' ? 'active' : ''}}" 
+          bindtap="onTabChange" 
+          data-tab="specs">Specifications</view>
+    <view class="tab {{currentTab === 'reviews' ? 'active' : ''}}" 
+          bindtap="onTabChange" 
+          data-tab="reviews">Reviews</view>
+  </view>
+
+  <!-- Tab Content -->
+  <view class="tab-content card">
+    <!-- Details Tab -->
+    <view class="tab-pane" hidden="{{currentTab !== 'detail'}}">
+      <view class="description">{{product.description}}</view>
+      <view class="features">
+        <view class="feature-item" wx:for="{{product.features}}" wx:key="*this">
+          <text class="feature-dot">•</text>
+          <text>{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Specifications Tab -->
+    <view class="tab-pane" hidden="{{currentTab !== 'specs'}}">
+      <view class="specs-table">
+        <view class="specs-row" wx:for="{{product.specifications}}" wx:key="name">
+          <text class="specs-label">{{item.name}}</text>
+          <text class="specs-value">{{selectedSpec[item.name] || 'Please select'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Reviews Tab -->
+    <view class="tab-pane" hidden="{{currentTab !== 'reviews'}}">
+      <view class="review-item" wx:for="{{reviews}}" wx:key="id">
+        <view class="review-header">
+          <text class="review-user">{{item.user}}</text>
+          <view class="review-rating">
+            <text class="star" wx:for="{{5}}" wx:key="*this" wx:for-item="star">
+              {{star <= item.rating ? '★' : '☆'}}
+            </text>
+          </view>
+        </view>
+        <view class="review-content">{{item.content}}</view>
+        <view class="review-images" wx:if="{{item.images.length > 0}}">
+          <image wx:for="{{item.images}}" 
+                 wx:key="*this" 
+                 wx:for-item="image"
+                 src="{{image}}"
+                 mode="aspectFill"
+                 class="review-image"
+                 bindtap="onImagePreview"
+                 data-current="{{image}}"/>
+        </view>
+        <view class="review-date">{{item.date}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- Bottom Action Bar -->
+  <view class="action-bar">
+    <view class="quantity-control">
+      <view class="quantity-btn" bindtap="onQuantityChange" data-type="minus">-</view>
+      <input type="number" value="{{quantity}}" disabled class="quantity-input"/>
+      <view class="quantity-btn" bindtap="onQuantityChange" data-type="plus">+</view>
+    </view>
+    <view class="action-buttons">
+      <button class="btn-outline" bindtap="onAddToCart">Add to Cart</button>
+      <button class="btn-primary" bindtap="onBuyNow">Buy Now</button>
+    </view>
+  </view>
+
+  <!-- Specification Selection Popup -->
+  <view class="popup" wx:if="{{showSpecPopup}}">
+    <view class="popup-mask" bindtap="onClosePopup"></view>
+    <view class="popup-content">
+      <view class="popup-header">
+        <text class="popup-title">Select Specifications</text>
+        <view class="popup-close" bindtap="onClosePopup">×</view>
+      </view>
+      <view class="popup-body">
+        <view class="spec-item" wx:for="{{product.specifications}}" wx:key="name">
+          <text class="spec-name">{{item.name}}</text>
+          <view class="spec-options">
+            <text class="spec-option {{selectedSpec[item.name] === option ? 'selected' : ''}}"
+                  wx:for="{{item.options}}" 
+                  wx:key="*this"
+                  wx:for-item="option"
+                  data-spec="{{item.name}}"
+                  data-value="{{option}}">
+              {{option}}
+            </text>
+          </view>
+        </view>
+      </view>
+      <view class="popup-footer">
+        <button class="btn-primary" bindtap="onClosePopup">Confirm</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- Add to Cart Success Popup -->
+  <view class="popup" wx:if="{{showCartPopup}}">
+    <view class="popup-mask" bindtap="onClosePopup"></view>
+    <view class="popup-content">
+      <view class="popup-header">
+        <text class="popup-title">Added to Cart</text>
+        <view class="popup-close" bindtap="onClosePopup">×</view>
+      </view>
+      <view class="popup-body">
+        <text>Product has been added to your cart</text>
+      </view>
+      <view class="popup-footer">
+        <button class="btn-outline" bindtap="onClosePopup">Continue Shopping</button>
+        <button class="btn-primary" bindtap="onGoToCart">Go to Cart</button>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- Loading State -->
+<view class="loading" wx:if="{{loading}}">
+  <view class="loading-spinner"></view>
+  <text>Loading...</text>
+</view> 

@@ -1,0 +1,58 @@
+<view class="container">
+  <!-- Search Bar -->
+  <view class="search-bar">
+    <view class="search-input" bindtap="onSearchTap">
+      <icon type="search" size="14" color="#999"/>
+      <text class="placeholder">Search products</text>
+    </view>
+  </view>
+
+  <!-- Banner Swiper -->
+  <swiper class="banner-swiper" indicator-dots autoplay circular>
+    <swiper-item wx:for="{{banners}}" wx:key="id" bindtap="onBannerTap" data-link="{{item.link}}">
+      <image src="{{item.imageUrl}}" mode="aspectFill" class="banner-image"/>
+    </swiper-item>
+  </swiper>
+
+  <!-- Categories Grid -->
+  <view class="section">
+    <view class="section-title">Categories</view>
+    <view class="category-grid">
+      <view class="category-item" 
+            wx:for="{{categories}}" 
+            wx:key="id"
+            bindtap="onCategoryTap"
+            data-id="{{item.id}}">
+        <image src="{{item.icon}}" mode="aspectFit" class="category-icon"/>
+        <text class="category-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Featured Products -->
+  <view class="section">
+    <view class="section-title">Featured Products</view>
+    <view class="product-grid">
+      <view class="product-card" 
+            wx:for="{{featuredProducts}}" 
+            wx:key="id"
+            bindtap="onProductTap"
+            data-id="{{item.id}}">
+        <image src="{{item.image}}" mode="aspectFill" class="product-image"/>
+        <view class="product-info">
+          <view class="product-name">{{item.name}}</view>
+          <view class="product-price">{{item.price}}</view>
+          <view class="product-tags">
+            <text class="tag tag-primary" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">{{tag}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- Loading State -->
+  <view class="loading" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text>Loading...</text>
+  </view>
+</view> 

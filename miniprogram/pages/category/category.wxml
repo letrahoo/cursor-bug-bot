@@ -1,0 +1,109 @@
+<view class="container">
+  <!-- Category Navigation -->
+  <view class="category-layout">
+    <!-- Left Category Menu -->
+    <scroll-view class="category-menu" scroll-y>
+      <view class="category-item {{currentCategory.id === item.id ? 'active' : ''}}"
+            wx:for="{{categories}}"
+            wx:key="id"
+            bindtap="onCategoryTap"
+            data-id="{{item.id}}">
+        <text>{{item.name}}</text>
+      </view>
+    </scroll-view>
+
+    <!-- Right Content Area -->
+    <view class="category-content">
+      <!-- Subcategories -->
+      <scroll-view class="subcategory-scroll" scroll-x>
+        <view class="subcategory-list">
+          <view class="subcategory-item {{item.id === currentSubCategory ? 'active' : ''}}"
+                wx:for="{{subCategories}}"
+                wx:key="id"
+                bindtap="onSubCategoryTap"
+                data-id="{{item.id}}">
+            {{item.name}}
+          </view>
+        </view>
+      </scroll-view>
+
+      <!-- Sort Bar -->
+      <view class="sort-bar">
+        <view class="sort-option" bindtap="onSortTap">
+          <text>{{sortOptions.find(opt => opt.value === currentSort).label}}</text>
+          <text class="sort-arrow">▼</text>
+        </view>
+      </view>
+
+      <!-- Product Grid -->
+      <scroll-view class="product-scroll" 
+                  scroll-y 
+                  bindscrolltolower="onReachBottom"
+                  enable-back-to-top>
+        <view class="product-grid">
+          <view class="product-card"
+                wx:for="{{products}}"
+                wx:key="id"
+                bindtap="onProductTap"
+                data-id="{{item.id}}">
+            <image src="{{item.image}}" mode="aspectFill" class="product-image"/>
+            <view class="product-info">
+              <view class="product-name">{{item.name}}</view>
+              <view class="product-price-row">
+                <view class="price">{{item.price}}</view>
+                <view class="original-price">¥{{item.originalPrice}}</view>
+              </view>
+              <view class="product-meta">
+                <text class="sales">Sales: {{item.sales}}</text>
+                <view class="product-tags">
+                  <text class="tag tag-primary" 
+                        wx:for="{{item.tags}}" 
+                        wx:key="*this" 
+                        wx:for-item="tag">
+                    {{tag}}
+                  </text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- Loading States -->
+        <view class="loading-more" wx:if="{{loading && products.length > 0}}">
+          <view class="loading-spinner"></view>
+          <text>Loading...</text>
+        </view>
+
+        <view class="no-more" wx:if="{{!hasMore && products.length > 0}}">
+          <text>No more products</text>
+        </view>
+
+        <view class="empty-state" wx:if="{{!loading && products.length === 0}}">
+          <image src="/images/empty.png" mode="aspectFit" class="empty-image"/>
+          <text>No products found</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- Sort Popup -->
+  <view class="popup" wx:if="{{showSortPopup}}">
+    <view class="popup-mask" bindtap="onCloseSortPopup"></view>
+    <view class="popup-content">
+      <view class="popup-header">
+        <text class="popup-title">Sort By</text>
+        <view class="popup-close" bindtap="onCloseSortPopup">×</view>
+      </view>
+      <view class="popup-body">
+        <view class="sort-option-item {{currentSort === item.value ? 'active' : ''}}"
+              wx:for="{{sortOptions}}"
+              wx:key="value"
+              bindtap="onSortSelect"
+              data-value="{{item.value}}">
+          <text>{{item.label}}</text>
+          <text class="check-icon" wx:if="{{currentSort === item.value}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view> 
